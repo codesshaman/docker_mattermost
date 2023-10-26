@@ -1,4 +1,4 @@
-name = Apache Atlas
+name = Mattermost
 
 VAR :=				# Cmd arg var
 NO_COLOR=\033[0m	# Color Reset
