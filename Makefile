@@ -5,6 +5,11 @@ NO_COLOR=\033[0m	# Color Reset
 OK=\033[32;01m		# Green Ok
 ERROR=\033[31;01m	# Error red
 WARN=\033[33;01m	# Warning yellow
+USER_ID = $(shell id -u)
+ifneq (,$(wildcard .env))
+    include .env
+    export $(shell sed 's/=.*//' .env)
+endif
 
 all:
 	@printf "Launch configuration ${name}...\n"
@@ -17,6 +22,8 @@ help:
 	@echo -e "$(WARN)- make config			: Show configuration
 	@echo -e "$(WARN)- make connect			: Exec to container"
 	@echo -e "$(WARN)- make dirs			: Create volumes directories"
+	@echo -e "$(WARN)- make folders			: Create necessary folders"
+	@echo -e "$(WARN)- make git			: Set git user"
 	@echo -e "$(WARN)- make down			: Stopping the configuration"
 	@echo -e "$(WARN)- make env			: Create .env from source"
 	@echo -e "$(WARN)- make ps			: Show the configuration "
@@ -53,16 +60,24 @@ env:
 		echo "$(ERROR_COLOR).env file already exists!$(NO_COLOR)"; \
 	else \
 		cp .env.example .env; \
-		echo "USER_ID=${USER_ID}" >> .env \
+		echo "USER_ID=${USER_ID}" >> .env && \
 		echo "$(OK_COLOR).env file successfully created!$(NO_COLOR)"; \
 	fi
+
+git:
+	@printf "$(YELLOW)==== Set user name and email to git for ${name} repo... ====$(NO_COLOR)\n"
+	@bash scripts/gituser.sh
+
+git:
+	@printf "$(YELLOW)==== Set user name and email to git for ${name} repo... ====$(NO_COLOR)\n"
+	@bash scripts/gituser.sh
 
 ps:
 	@printf "Show the configuration ${name}......\n"
 	@docker-compose -f ./docker-compose.yml ps
 
 push:
-	@bash push.sh
+	@bash scripts/push.sh
 
 re:
 	@printf "Rebuild the configuration ${name}...\n"
