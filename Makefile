@@ -64,9 +64,9 @@ env:
 		echo "$(OK_COLOR).env file successfully created!$(NO_COLOR)"; \
 	fi
 
-git:
+folders:
 	@printf "$(YELLOW)==== Set user name and email to git for ${name} repo... ====$(NO_COLOR)\n"
-	@bash scripts/gituser.sh
+	@bash scripts/folders.sh
 
 git:
 	@printf "$(YELLOW)==== Set user name and email to git for ${name} repo... ====$(NO_COLOR)\n"

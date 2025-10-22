@@ -15,6 +15,10 @@ make env
 ```
 
 ```
+make env
+```
+
+```
 nano .env
 ```
 
