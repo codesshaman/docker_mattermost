@@ -21,7 +21,6 @@ help:
 	@echo -e "$(WARN)- make build			: Configuration build"
 	@echo -e "$(WARN)- make config			: Show configuration
 	@echo -e "$(WARN)- make connect			: Exec to container"
-	@echo -e "$(WARN)- make dirs			: Create volumes directories"
 	@echo -e "$(WARN)- make folders			: Create necessary folders"
 	@echo -e "$(WARN)- make git			: Set git user"
 	@echo -e "$(WARN)- make down			: Stopping the configuration"
@@ -42,13 +41,7 @@ config:
 	@docker-compose config
 
 connect:
-	@docker exec -it atlas bash
-
-dirs:
-	@if [ ! -d conf ]; then mkdir conf; fi
-	@if [ ! -d data ]; then mkdir data; fi
-	@if [ ! -d logs ]; then mkdir logs; fi
-	@printf "Directories was created!\n"
+	@docker exec -it app bash
 
 down:
 	@printf "Stopping the configuration ${name}...\n"
@@ -65,7 +58,7 @@ env:
 	fi
 
 folders:
-	@printf "$(YELLOW)==== Set user name and email to git for ${name} repo... ====$(NO_COLOR)\n"
+	@printf "$(YELLOW)==== Create necessary for folders ${name}... ====$(NO_COLOR)\n"
 	@bash scripts/folders.sh
 
 git:

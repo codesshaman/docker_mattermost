@@ -20,5 +20,5 @@ if [ ! -d "volumes" ]; then
 
   # Создаем каталоги внутри volumes
   mkdir -p volumes/web/cert
-  mkdir -p /volumes/db/var/lib/postgresql/data
+  mkdir -p volumes/db/var/lib/postgresql/data
 fi
