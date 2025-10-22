@@ -1,4 +1,4 @@
-version: "3"
+---
 
 services:
 
@@ -10,14 +10,17 @@ services:
       - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - POSTGRES_USER=mmuser
-      - POSTGRES_PASSWORD=mmuser_password
-      - POSTGRES_DB=mattermost
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASS
+      - POSTGRES_DB=$POSTGRES_DB
     # uncomment the following to enable backup
     #  - AWS_ACCESS_KEY_ID=XXXX
     #  - AWS_SECRET_ACCESS_KEY=XXXX
     #  - WALE_S3_PREFIX=s3://BUCKET_NAME/PATH
     #  - AWS_REGION=us-east-1
+    networks:
+      network:
+        ipv4_address: $DB_HOST
 
   app:
     build:
@@ -41,22 +44,23 @@ services:
       # - <path_to_your_gitlab_pki>/pki_chain.pem:/etc/ssl/certs/pki_chain.pem:ro
     environment:
       # set same as db credentials and dbname
-      - MM_USERNAME=mmuser
-      - MM_PASSWORD=mmuser_password
-      - MM_DBNAME=mattermost
-
+      - MM_USERNAME=$POSTGRES_USER
+      - MM_PASSWORD=$POSTGRES_PASS
+      - MM_DBNAME=$POSTGRES_DB
       # use the credentials you've set above, in the format:
       # MM_SQLSETTINGS_DATASOURCE=postgres://${MM_USERNAME}:${MM_PASSWORD}@db:5432/${MM_DBNAME}?sslmode=disable&connect_timeout=10
-      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmuser_password@db:5432/mattermost?sslmode=disable&connect_timeout=10
-
+      - MM_SQLSETTINGS_DATASOURCE=postgres://$POSTGRES_USER:$POSTGRES_PASS@db:5432/$POSTGRES_DB?sslmode=disable&connect_timeout=10
       # in case your config is not in default location
       #- MM_CONFIG=/mattermost/config/config.json
+    networks:
+      network:
+        ipv4_address: $APP_HOST
 
   web:
     build: web
     ports:
-      - "8080:8080"
-      - "443:8443"
+      - "$WEBUI_HTTP:8080"
+      - "$WEBUI_HTTPS:8443"
     read_only: true
     restart: unless-stopped
     volumes:
@@ -65,3 +69,15 @@ services:
       - /etc/localtime:/etc/localtime:ro
     cap_drop:
       - ALL
+    networks:
+      network:
+        ipv4_address: $WEB_HOST
+
+networks:
+  network:
+    driver: bridge
+    name: $NETWK_NAME
+    ipam:
+      config:
+        - subnet: $NETWK_ADDR
+          gateway: $NETWK_GATE

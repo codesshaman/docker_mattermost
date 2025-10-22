@@ -14,6 +14,7 @@ help:
 	@echo -e "$(OK)==== Все команды для конфигурации ${name} ===="
 	@echo -e "$(WARN)- make				: Launch configuration"
 	@echo -e "$(WARN)- make build			: Configuration build"
+	@echo -e "$(WARN)- make config			: Show configuration
 	@echo -e "$(WARN)- make connect			: Exec to container"
 	@echo -e "$(WARN)- make dirs			: Create volumes directories"
 	@echo -e "$(WARN)- make down			: Stopping the configuration"
@@ -29,6 +30,10 @@ build:
 	@bash folders.sh
 	@docker-compose -f ./docker-compose.yml up -d --build
 
+config:
+	@printf "$(OK_COLOR)==== Wiew container configuration... ====$(NO_COLOR)\n"
+	@docker-compose config
+
 connect:
 	@docker exec -it atlas bash
 
@@ -43,8 +48,14 @@ down:
 	@docker-compose -f ./docker-compose.yml down
 
 env:
-	@if [ ! -f .env ]; then cp .env.example .env; fi
-	@printf ".env from source was created!\n"
+	@printf "$(WARN_COLOR)==== Create environment file for ${name}... ====$(NO_COLOR)\n"
+	@if [ -f .env ]; then \
+		echo "$(ERROR_COLOR).env file already exists!$(NO_COLOR)"; \
+	else \
+		cp .env.example .env; \
+		echo "USER_ID=${USER_ID}" >> .env \
+		echo "$(OK_COLOR).env file successfully created!$(NO_COLOR)"; \
+	fi
 
 ps:
 	@printf "Show the configuration ${name}......\n"
