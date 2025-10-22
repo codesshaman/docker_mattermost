@@ -28,8 +28,8 @@ services:
       # uncomment following lines for team edition or change UID/GID
       args:
         - edition=team
-        - PUID=1000
-        - PGID=1000
+        - PUID=$USER_ID
+        - PGID=$USER_ID
       #   - MM_VERSION=5.31
     restart: unless-stopped
     volumes:
